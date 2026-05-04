@@ -1,11 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ChevronRight, CheckCircle2, XCircle, RefreshCw, Home, BookOpen, Brain, Trophy, Target } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 // ==================== TYPES & DATA ====================
 import { GameMode, Part, InteractiveType, InteractiveQuestion, MultipleChoice, BooleanQuestion, ShortAnswer, SubSkill, Topic } from '@/lib/types';
@@ -14,6 +16,7 @@ import { topicData } from '@/lib/questions';
 // ==================== MAIN APP COMPONENT ====================
 export default function GiaSuAI() {
   const [mode, setMode] = useState<GameMode>('home');
+  const [isLoading, setIsLoading] = useState(true);
   const [currentTopic, setCurrentTopic] = useState<Topic | null>(null);
   const [currentPart, setCurrentPart] = useState<Part>('part1');
   const [currentSubSkill, setCurrentSubSkill] = useState<SubSkill | null>(null);
@@ -22,8 +25,32 @@ export default function GiaSuAI() {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState({ part1: 0, part2: 0, total: 0, p1Total: 0, p2Total: 0 });
+  const router = useRouter();
 
-  const resetLearning = () => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push('/auth/sign-up');
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-svh w-full items-center justify-center bg-background">
+        <div className="text-center">
+          <p className="text-lg text-foreground">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
     setQuestionIndex(0); setSubSkillIndex(0); setAnswers({});
     setShowExplanation(false); setScore({ part1: 0, part2: 0, total: 0, p1Total: 0, p2Total: 0 });
   };

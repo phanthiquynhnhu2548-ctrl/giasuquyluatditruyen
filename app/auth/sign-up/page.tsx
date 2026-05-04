@@ -42,27 +42,37 @@ export default function SignUpPage() {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // Sign up the user
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
-      if (error) throw error
       
-      // Auto sign in after signup (no email confirmation needed)
-      if (data.user) {
+      if (signUpError) throw signUpError
+      
+      // Auto sign in after signup
+      if (signUpData.user) {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
-        if (!signInError) {
-          router.push('/dashboard')
-        } else {
-          router.push('/auth/sign-up-success')
+        
+        if (signInError) {
+          setError('Tạo tài khoản thành công nhưng không thể đăng nhập. Vui lòng thử đăng nhập lại.')
+          setIsLoading(false)
+          return
         }
+        
+        // Successfully signed in
+        router.push('/dashboard')
       } else {
         router.push('/auth/sign-up-success')
       }
     } catch (error: unknown) {
+      console.error('[v0] Sign up error:', error)
       setError(error instanceof Error ? error.message : 'Có lỗi xảy ra')
     } finally {
       setIsLoading(false)
