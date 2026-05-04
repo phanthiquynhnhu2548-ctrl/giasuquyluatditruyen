@@ -51,8 +51,13 @@ export default function GiaSuAI() {
       </div>
     );
   }
-    setQuestionIndex(0); setSubSkillIndex(0); setAnswers({});
-    setShowExplanation(false); setScore({ part1: 0, part2: 0, total: 0, p1Total: 0, p2Total: 0 });
+
+  const resetLearning = () => {
+    setQuestionIndex(0); 
+    setSubSkillIndex(0); 
+    setAnswers({});
+    setShowExplanation(false); 
+    setScore({ part1: 0, part2: 0, total: 0, p1Total: 0, p2Total: 0 });
   };
 
   const handleSelectTopic = (topic: Topic) => {
@@ -170,7 +175,7 @@ function HomeScreen({ onStart }: { onStart: () => void }) {
         </div>
         <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
           <div className="text-amber-800 font-semibold">🏆 Chủ đề 5: Tổng hợp Quy luật Di Truyền</div>
-          <div className="text-amber-700 text-sm">Vận dụng và phân biệt tổng hợp các quy luật · Bài tập nâng cao</div>
+          <div className="text-amber-700 text-sm">Vận dụng và phân bi��t tổng hợp các quy luật · Bài tập nâng cao</div>
         </div>
         <Button onClick={onStart} size="lg" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-xl py-6 rounded-2xl shadow-lg">
           🚀 Bắt đầu học ngay!
